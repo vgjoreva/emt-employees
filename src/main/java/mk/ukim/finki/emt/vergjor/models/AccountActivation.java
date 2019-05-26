@@ -14,13 +14,28 @@ public class AccountActivation {
     @Column(name = "is_activated")
     private boolean userIsActivated;
 
+    @Column(name = "is_valid")
+    private boolean codeIsValid;
+
     @Column(name = "registered_at")
     private LocalDateTime registeredAt;
+
+    @ManyToOne
+    private Role employee_position;
 
     @OneToOne
     private User userID;
 
     public AccountActivation(){}
+
+    public AccountActivation(int activation_code, boolean userIsActivated, boolean codeIsValid, LocalDateTime registeredAt, Role employee_position, User userID) {
+        this.activation_code = activation_code;
+        this.userIsActivated = userIsActivated;
+        this.codeIsValid = codeIsValid;
+        this.registeredAt = registeredAt;
+        this.employee_position = employee_position;
+        this.userID = userID;
+    }
 
     public int getActivation_code() {
         return activation_code;
@@ -52,5 +67,29 @@ public class AccountActivation {
 
     public void setUser_id(User user_id) {
         this.userID = user_id;
+    }
+
+    public Role getEmployee_position() {
+        return employee_position;
+    }
+
+    public void setEmployee_position(Role employee_position) {
+        this.employee_position = employee_position;
+    }
+
+    public User getUserID() {
+        return userID;
+    }
+
+    public void setUserID(User userID) {
+        this.userID = userID;
+    }
+
+    public boolean isCodeIsValid() {
+        return codeIsValid;
+    }
+
+    public void setCodeIsValid(boolean codeIsValid) {
+        this.codeIsValid = codeIsValid;
     }
 }

@@ -25,12 +25,17 @@
                 <input id="password" type="password" class="form-control" name="password" required>
             </div>
 
-            <div class="form-group">
+            <div class="form-group form-inline mx-auto text-center">
                 <label for="rememberUser">Remember me? </label>
-                <input id="rememberUser" type="checkbox" class="form-control" name="rememberUser" required>
+                <input id="rememberUser" type="checkbox" class="form-control" name="rememberUser">
             </div>
 
-            <button type="submit" class="btn btn-primary">Submit</button>
+
+
+            <button type="submit" class="btn btn-secondary">Sign In</button>
+            <button class="btn btn-warning">
+                <a class="btn-link text-light" th:href="@{/sign_up}">Sign Up</a>
+            </button>
         </form>
 
     </div>

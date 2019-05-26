@@ -1,25 +1,31 @@
 package mk.ukim.finki.emt.vergjor.services.impl;
 
-import mk.ukim.finki.emt.vergjor.models.AccountActivation;
-import mk.ukim.finki.emt.vergjor.models.Department;
-import mk.ukim.finki.emt.vergjor.models.User;
+import mk.ukim.finki.emt.vergjor.models.*;
 import mk.ukim.finki.emt.vergjor.repository.AccountActivationsRepository;
 import mk.ukim.finki.emt.vergjor.repository.DepartmentRepository;
+import mk.ukim.finki.emt.vergjor.repository.RoleRepository;
 import mk.ukim.finki.emt.vergjor.repository.UserRepository;
 import mk.ukim.finki.emt.vergjor.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -31,12 +37,69 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private final AccountActivationsRepository accountActivationsRepository;
 
+    @Autowired
+    private final RoleRepository roleRepository;
+
     public UserServiceImpl(UserRepository userRepository,
                            DepartmentRepository departmentRepository,
-                           AccountActivationsRepository accountActivationsRepository) {
+                           AccountActivationsRepository accountActivationsRepository,
+                           RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.departmentRepository = departmentRepository;
         this.accountActivationsRepository = accountActivationsRepository;
+        this.roleRepository = roleRepository;
+    }
+
+    @PostConstruct
+    public void init() {
+
+        departmentRepository.save(new Department("Development"));
+        departmentRepository.save(new Department("Testing"));
+
+        roleRepository.save(new Role(1, "USER"));
+        roleRepository.save(new Role(2, "ADMIN"));
+        roleRepository.save(new Role(3, "MANAGER"));
+        roleRepository.save(new Role(4, "EMPLOYEE"));
+
+        User user = new User("Veronika Gjoreva",
+                        "veronika.goreva@students.finki.ukim.mk",
+                        "potato",
+                        EmploymentLevel.MID_LEVEL_TESTER,
+                        departmentRepository.findByDepartmentID(2),
+                        roleRepository.findByRoleID(1));
+
+        userRepository.save(user);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        accountActivationsRepository.save(
+                new AccountActivation(
+                        ThreadLocalRandom.current().nextInt(100000, 900000),
+                        false,
+                        true,
+                        LocalDateTime.parse("2019-05-25 15:22:02", formatter),
+                        roleRepository.findByRoleID(4),
+                        user
+                ));
+
+        User user2 = new User("Goran Nushkov",
+                "veronika.gjoreva@pm.me",
+                "potato",
+                EmploymentLevel.SENIOR_DEVELOPER,
+                departmentRepository.findByDepartmentID(1),
+                roleRepository.findByRoleID(4));
+
+        userRepository.save(user2);
+
+        accountActivationsRepository.save(
+                new AccountActivation(
+                        ThreadLocalRandom.current().nextInt(100000, 900000),
+                        true,
+                        true,
+                        LocalDateTime.parse("2019-05-25 18:52:02", formatter),
+                        roleRepository.findByRoleID(4),
+                        user2
+                ));
+
     }
 
 
@@ -59,14 +122,34 @@ public class UserServiceImpl implements UserService {
 
         try {
 
-            MimeMessage message = new MimeMessage(session);
-            message.addRecipient(Message.RecipientType.TO,new InternetAddress(user.getEmail()));
-            message.setSubject("Activation Code");
+            if(user.getLevel() == EmploymentLevel.JUNIOR_DEVELOPER ||
+                    user.getLevel() == EmploymentLevel.MID_LEVEL_DEVELOPER ||
+                    user.getLevel() == EmploymentLevel.SENIOR_DEVELOPER)
+                user.setDepartmentID(departmentRepository.findByDepartmentID(1));
+            else if(user.getLevel() == EmploymentLevel.JUNIOR_TESTER ||
+                    user.getLevel() == EmploymentLevel.MID_LEVEL_TESTER||
+                    user.getLevel() == EmploymentLevel.SENIOR_TESTER)
+                user.setDepartmentID(departmentRepository.findByDepartmentID(2));
+
+            user.setRoleID(roleRepository.findByRoleID(1));
+            userRepository.save(user);
 
             AccountActivation accountActivation = new AccountActivation();
 
             int activationCode = ThreadLocalRandom.current().nextInt(100000, 900000);
             accountActivation.setActivation_code(activationCode);
+
+            accountActivation.setRegisteredAt(LocalDateTime.now());
+            accountActivation.setUserIsActivated(false);
+            accountActivation.setUser_id(user);
+            accountActivation.setEmployee_position(roleRepository.findByRoleID(2));
+
+            accountActivationsRepository.save(accountActivation);
+
+            MimeMessage message = new MimeMessage(session);
+            message.addRecipient(Message.RecipientType.TO,new InternetAddress(user.getEmail()));
+            message.setSubject("Activation Code");
+
             String activationLink = "http://localhost:8080/activation/"+activationCode;
 
             String activationMsg =  "Dear "+user.getFull_name()+",\n\nYou have successfully created a new account!\n" +
@@ -78,26 +161,37 @@ public class UserServiceImpl implements UserService {
             Transport.send(message);
             System.out.println("message sent successfully");
 
-            Department d = new Department();
-            d.setDepartment_name("221");
-            departmentRepository.save(d);
-
-            user.setUser_department(d);
-            userRepository.save(user);
-
-            accountActivation.setRegisteredAt(LocalDateTime.now());
-            accountActivation.setUserIsActivated(false);
-            accountActivation.setUser_id(user);
-
-            accountActivationsRepository.save(accountActivation);
 
         } catch (MessagingException e) {throw new RuntimeException(e);}
 
     }
 
     @Override
+    public boolean activateUserAccount(int code){
+
+        if(accountActivationsRepository.existsById(code)) {
+            AccountActivation activation = accountActivationsRepository.findById(code).get();
+            activation.setUserIsActivated(true);
+
+            accountActivationsRepository.save(activation);
+
+            User user = activation.getUserID();
+            user.setRoleID(activation.getEmployee_position());
+
+            userRepository.save(user);
+
+            if(userRepository.findById(activation.getUserID().getUser_id()).get().getRoleID().equals(activation.getEmployee_position())
+                && accountActivationsRepository.findById(code).get().isUserIsActivated()){
+                return true;
+            }
+            else return false;
+        }
+        return false;
+    }
+
+    @Override
     public User findUserById(String user_id) {
-        return userRepository.findById(user_id).get();
+        return userRepository.findByUserID(user_id);
     }
 
     @Override
@@ -106,7 +200,75 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existsByEmail(String email) {
+    public int existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean isUserRegistered(String user_id){
+        return accountActivationsRepository.isUserRegistered(user_id);
+    }
+
+    private static final Random RANDOM = new SecureRandom();
+    private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    public static String generatePassword(int length) {
+        StringBuilder returnValue = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            returnValue.append(ALPHABET.charAt(RANDOM.nextInt(ALPHABET.length())));
+        }
+        return new String(returnValue);
+    }
+
+    @Override
+    public void sendNewPassword(String email){
+
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.socketFactory.port", "465");
+        props.put("mail.smtp.socketFactory.class",
+                "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.port", "465");
+
+        Session session = Session.getDefaultInstance(props,
+                new Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication("veronika.gjoreva", "wmljcpkxeeqlpfyb");
+                    }
+                });
+
+        try {
+
+            MimeMessage message = new MimeMessage(session);
+            message.addRecipient(Message.RecipientType.TO,new InternetAddress(email));
+            message.setSubject("New password request");
+
+            User user = userRepository.findByEmail(email);
+
+            String newPassword = generatePassword(8);
+            updateUserPassword(user.getUser_id(), newPassword);
+
+            String newPasswordMsg =  "Dear "+user.getFull_name()+",\n\nYou have requested to create a new password.\n" +
+                    "Here is your new password:\n" + newPassword;
+
+            message.setText(newPasswordMsg);
+
+            Transport.send(message);
+            System.out.println("message sent successfully");
+
+
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void updateUserPassword(String id, String password){
+
+        User user = userRepository.getOne(id);
+        user.setPassword(password);
+        userRepository.save(user);
+
     }
 }

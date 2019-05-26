@@ -27,9 +27,21 @@ public class User {
     private EmploymentLevel level;
 
     @ManyToOne
-    private Department user_department;
+    private Department departmentID;
+
+    @ManyToOne
+    private Role roleID;
 
     public User(){}
+
+    public User(String full_name, String email, String password, EmploymentLevel level, Department departmentID, Role roleID) {
+        this.full_name = full_name;
+        this.email = email;
+        this.password = password;
+        this.level = level;
+        this.departmentID = departmentID;
+        this.roleID = roleID;
+    }
 
     public String getUser_id() {
         return user_id;
@@ -71,11 +83,19 @@ public class User {
         this.level = level;
     }
 
-    public Department getUser_department() {
-        return user_department;
+    public Department getDepartmentID() {
+        return departmentID;
     }
 
-    public void setUser_department(Department user_department) {
-        this.user_department = user_department;
+    public void setDepartmentID(Department departmentID) {
+        this.departmentID = departmentID;
+    }
+
+    public Role getRoleID() {
+        return roleID;
+    }
+
+    public void setRoleID(Role roleID) {
+        this.roleID = roleID;
     }
 }
