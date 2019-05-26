@@ -20,6 +20,9 @@ public class AccountActivation {
     @Column(name = "registered_at")
     private LocalDateTime registeredAt;
 
+    @Column(name = "valid_until")
+    private LocalDateTime validUntil;
+
     @ManyToOne
     private Role employee_position;
 
@@ -28,11 +31,12 @@ public class AccountActivation {
 
     public AccountActivation(){}
 
-    public AccountActivation(int activation_code, boolean userIsActivated, boolean codeIsValid, LocalDateTime registeredAt, Role employee_position, User userID) {
+    public AccountActivation(int activation_code, boolean userIsActivated, boolean codeIsValid, LocalDateTime registeredAt, LocalDateTime validUntil, Role employee_position, User userID) {
         this.activation_code = activation_code;
         this.userIsActivated = userIsActivated;
         this.codeIsValid = codeIsValid;
         this.registeredAt = registeredAt;
+        this.validUntil = validUntil;
         this.employee_position = employee_position;
         this.userID = userID;
     }
@@ -91,5 +95,13 @@ public class AccountActivation {
 
     public void setCodeIsValid(boolean codeIsValid) {
         this.codeIsValid = codeIsValid;
+    }
+
+    public LocalDateTime getValidUntil() {
+        return validUntil;
+    }
+
+    public void setValidUntil(LocalDateTime validUntil) {
+        this.validUntil = validUntil;
     }
 }

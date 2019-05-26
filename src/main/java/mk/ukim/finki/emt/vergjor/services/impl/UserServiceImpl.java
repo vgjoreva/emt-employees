@@ -7,7 +7,6 @@ import mk.ukim.finki.emt.vergjor.repository.RoleRepository;
 import mk.ukim.finki.emt.vergjor.repository.UserRepository;
 import mk.ukim.finki.emt.vergjor.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,12 +70,17 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        LocalDateTime start1 = LocalDateTime.parse("2019-05-25 04:09:02", formatter);
+        LocalDateTime end1 = start1.plusHours(24);
+
         accountActivationsRepository.save(
                 new AccountActivation(
                         ThreadLocalRandom.current().nextInt(100000, 900000),
                         false,
                         true,
-                        LocalDateTime.parse("2019-05-25 15:22:02", formatter),
+                        start1,
+                        end1,
                         roleRepository.findByRoleID(4),
                         user
                 ));
@@ -90,12 +94,16 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user2);
 
+        LocalDateTime start = LocalDateTime.parse("2019-05-25 18:52:02", formatter);
+        LocalDateTime end = start.plusHours(24);
+
         accountActivationsRepository.save(
                 new AccountActivation(
                         ThreadLocalRandom.current().nextInt(100000, 900000),
                         true,
                         true,
-                        LocalDateTime.parse("2019-05-25 18:52:02", formatter),
+                        start,
+                        end,
                         roleRepository.findByRoleID(4),
                         user2
                 ));
@@ -140,7 +148,9 @@ public class UserServiceImpl implements UserService {
             accountActivation.setActivation_code(activationCode);
 
             accountActivation.setRegisteredAt(LocalDateTime.now());
+            accountActivation.setValidUntil(accountActivation.getRegisteredAt().plusHours(24));
             accountActivation.setUserIsActivated(false);
+            accountActivation.setCodeIsValid(true);
             accountActivation.setUser_id(user);
             accountActivation.setEmployee_position(roleRepository.findByRoleID(2));
 
