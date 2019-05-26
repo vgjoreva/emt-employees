@@ -1,5 +1,6 @@
 package mk.ukim.finki.emt.vergjor.services.impl;
 
+import mk.ukim.finki.emt.vergjor.config.SecurityConfiguration;
 import mk.ukim.finki.emt.vergjor.models.*;
 import mk.ukim.finki.emt.vergjor.repository.AccountActivationsRepository;
 import mk.ukim.finki.emt.vergjor.repository.DepartmentRepository;
@@ -7,6 +8,7 @@ import mk.ukim.finki.emt.vergjor.repository.RoleRepository;
 import mk.ukim.finki.emt.vergjor.repository.UserRepository;
 import mk.ukim.finki.emt.vergjor.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +41,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private final RoleRepository roleRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public UserServiceImpl(UserRepository userRepository,
                            DepartmentRepository departmentRepository,
                            AccountActivationsRepository accountActivationsRepository,
@@ -60,9 +65,11 @@ public class UserServiceImpl implements UserService {
         roleRepository.save(new Role(3, "MANAGER"));
         roleRepository.save(new Role(4, "EMPLOYEE"));
 
-        User user = new User("Veronika Gjoreva",
+        User user =
+                new User(
+                        "Veronika Gjoreva",
                         "veronika.goreva@students.finki.ukim.mk",
-                        "potato",
+                        passwordEncoder.encode("potato"),
                         EmploymentLevel.MID_LEVEL_TESTER,
                         departmentRepository.findByDepartmentID(2),
                         roleRepository.findByRoleID(1));
@@ -71,7 +78,7 @@ public class UserServiceImpl implements UserService {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        LocalDateTime start1 = LocalDateTime.parse("2019-05-25 04:09:02", formatter);
+        LocalDateTime start1 = LocalDateTime.parse("2019-05-26 04:09:02", formatter);
         LocalDateTime end1 = start1.plusHours(24);
 
         accountActivationsRepository.save(
@@ -87,7 +94,7 @@ public class UserServiceImpl implements UserService {
 
         User user2 = new User("Goran Nushkov",
                 "veronika.gjoreva@pm.me",
-                "potato",
+                passwordEncoder.encode("potato"),
                 EmploymentLevel.SENIOR_DEVELOPER,
                 departmentRepository.findByDepartmentID(1),
                 roleRepository.findByRoleID(4));

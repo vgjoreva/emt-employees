@@ -13,7 +13,7 @@
     <div class="container mx-auto text-center">
         <h4 class="mt-5 mb-5">Sign in</h4>
 
-        <form class="form col-5 mx-auto" enctype="multipart/form-data" method="post" action="/">
+        <form class="form col-5 mx-auto" enctype="multipart/form-data" method="post" action="/login/validate">
 
             <div class="form-group">
                 <label for="email">E-mail address:</label>
@@ -35,8 +35,8 @@
                 <a th:href="@{/forgot_password}" class="text-center">Forgot password?</a>
             </div>
 
-            <button class="btn btn-muted">
-                <a class="btn-link text-light" th:href="@{/sign_up}">Sign Up</a>
+            <button class="btn btn-secondary">
+                <a class="btn-link text-dark" th:href="@{/sign_up}">Sign Up</a>
             </button>
             <button type="submit" class="btn btn-warning">Sign In</button>
         </form>

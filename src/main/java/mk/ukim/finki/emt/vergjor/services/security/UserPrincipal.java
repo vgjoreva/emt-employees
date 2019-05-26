@@ -6,7 +6,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -21,9 +23,9 @@ public class UserPrincipal implements UserDetails {
     @JsonIgnore
     private String password;
 
-    private GrantedAuthority authorities;
+    private Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(String id, String name, String email, String password, GrantedAuthority authorities) {
+    public UserPrincipal(String id, String name, String email, String password, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.fullName = name;
         this.email = email;
@@ -33,8 +35,9 @@ public class UserPrincipal implements UserDetails {
 
     public static UserPrincipal create(User user) {
 
-        GrantedAuthority authorities =
-                new SimpleGrantedAuthority("ROLE_" + user.getRoleID());
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRoleID().getRole()));
+        System.out.println(authorities.get(0));
 
         return new UserPrincipal(
                 user.getUser_id(),
@@ -69,7 +72,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return (Collection<? extends GrantedAuthority>) authorities;
+        return authorities;
     }
 
     @Override

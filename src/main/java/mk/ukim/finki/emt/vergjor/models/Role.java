@@ -1,6 +1,7 @@
 package mk.ukim.finki.emt.vergjor.models;
 
 import javax.persistence.*;
+import java.util.stream.DoubleStream;
 
 @Entity
 @Table(name = "roles")
@@ -35,4 +36,5 @@ public class Role {
     public void setRole(String role) {
         this.role = role;
     }
+
 }
