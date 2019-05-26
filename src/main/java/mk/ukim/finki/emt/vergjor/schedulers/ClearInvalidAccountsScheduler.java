@@ -34,7 +34,7 @@ public class ClearInvalidAccountsScheduler {
                         .findAll()
                         .stream()
                         .filter(accountActivation -> !accountActivation.isCodeIsValid() ||
-                                (accountActivation.isUserIsActivated() &&
+                                (!accountActivation.isUserIsActivated() &&
                                 (accountActivation.getValidUntil().isEqual(LocalDateTime.now()) ||
                                         accountActivation.getValidUntil().isBefore(LocalDateTime.now()) )))
                         .collect(Collectors.toList());
