@@ -9,7 +9,7 @@ public interface UserService {
     void registerUser(User user);
     User findUserById(String user_id);
     List<User> findByDepartmentID(int department_id);
-    int existsByEmail(String email);
+    String existsByEmail(String email);
     boolean activateUserAccount(int code);
     boolean isUserRegistered(String user_id);
     void sendNewPassword(String email);

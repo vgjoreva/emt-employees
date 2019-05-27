@@ -22,6 +22,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.servlet.http.HttpServletRequest;
+
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 @EnableJpaRepositories(basePackageClasses = UserRepository.class)
@@ -71,6 +73,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/activation/**").permitAll()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/forgot_password/**").permitAll()
+                .antMatchers("/current_user").permitAll()
+                .antMatchers("/user/exists/**").permitAll()
                 .anyRequest().authenticated();
 
 

@@ -217,8 +217,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
+    public String existsByEmail(String email) {
+        if(userRepository.existsByEmail(email) > 0){
+            return "Email already exists";
+        }
+        else return "Valid";
     }
 
     @Override
