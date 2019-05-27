@@ -20,6 +20,7 @@ class App extends Component{
                 <Route exact path='/login/forget_password' component={ForgetPassword} />
                 <Route exact path='/sign_up' component={SignUp} />
                 <Route exact path='/activation' component={ActivateUser} />
+                <Route exact path="/activation/:code" component={ActivateUser} />
             </div>
         );
     }

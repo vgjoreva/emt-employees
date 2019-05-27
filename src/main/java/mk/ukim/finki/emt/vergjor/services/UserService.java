@@ -10,7 +10,8 @@ public interface UserService {
     User findUserById(String user_id);
     List<User> findByDepartmentID(int department_id);
     String existsByEmail(String email);
-    boolean activateUserAccount(int code);
+    void activateUserAccount(int code);
+    String isActivationCodeValid(int code);
     boolean isUserRegistered(String user_id);
     void sendNewPassword(String email);
     void updateUserPassword(String id, String password);

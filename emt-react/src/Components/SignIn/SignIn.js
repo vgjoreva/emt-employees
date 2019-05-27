@@ -85,10 +85,10 @@ class SignIn extends Component{
                         <a href="/login/forget_password" className="text-center">Forgot password?</a>
                     </div>
 
+                    <button type="submit" onClick={this.handleSubmit} className="btn btn-warning m-3">Sign In</button>
                     <button className="btn btn-secondary m-3">
                         <a className="btn-link text-dark" href="/sign_up">Sign Up</a>
                     </button>
-                    <button type="submit" onClick={this.handleSubmit} className="btn btn-warning m-3">Sign In</button>
                 </form>
 
             </div>

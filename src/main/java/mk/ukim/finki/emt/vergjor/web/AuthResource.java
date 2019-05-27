@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 @CrossOrigin("*")
-@Controller
+@RestController
 public class AuthResource {
 
     private final CustomUserDetailsService customUserDetailsService;

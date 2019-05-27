@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        LocalDateTime start1 = LocalDateTime.parse("2019-05-26 04:09:02", formatter);
+        LocalDateTime start1 = LocalDateTime.parse("2019-05-27 04:09:02", formatter);
         LocalDateTime end1 = start1.plusHours(24);
 
         accountActivationsRepository.save(
@@ -146,6 +146,7 @@ public class UserServiceImpl implements UserService {
                     user.getLevel() == EmploymentLevel.SENIOR_TESTER)
                 user.setDepartmentID(departmentRepository.findByDepartmentID(2));
 
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setRoleID(roleRepository.findByRoleID(1));
             userRepository.save(user);
 
@@ -167,8 +168,9 @@ public class UserServiceImpl implements UserService {
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(user.getEmail()));
             message.setSubject("Activation Code");
 
-            String activationLink = "http://localhost:8080/activation/"+activationCode;
+            String activationLink = "http://localhost:3000/activation/"+activationCode;
 
+            System.out.println(user.getFull_name());
             String activationMsg =  "Dear "+user.getFull_name()+",\n\nYou have successfully created a new account!\n" +
                     "In order to log in you must enter the following activation code:\n" + activationCode +
                     "\n\nOr click in the link:\n" + activationLink;
@@ -184,26 +186,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean activateUserAccount(int code){
+    public void activateUserAccount(int code){
 
-        if(accountActivationsRepository.existsById(code)) {
-            AccountActivation activation = accountActivationsRepository.findById(code).get();
-            activation.setUserIsActivated(true);
+        AccountActivation activation = accountActivationsRepository.findById(code).get();
+        activation.setUserIsActivated(true);
 
-            accountActivationsRepository.save(activation);
+        accountActivationsRepository.save(activation);
 
-            User user = activation.getUserID();
-            user.setRoleID(activation.getEmployee_position());
+        User user = activation.getUserID();
+        user.setRoleID(activation.getEmployee_position());
 
-            userRepository.save(user);
+        userRepository.save(user);
 
-            if(userRepository.findById(activation.getUserID().getUser_id()).get().getRoleID().equals(activation.getEmployee_position())
-                && accountActivationsRepository.findById(code).get().isUserIsActivated()){
-                return true;
-            }
-            else return false;
-        }
-        return false;
     }
 
     @Override
@@ -218,10 +212,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String existsByEmail(String email) {
-        if(userRepository.existsByEmail(email) > 0){
+        System.out.println(email);
+        if(userRepository.existsByEmail(email)){
             return "Email already exists";
         }
         else return "Valid";
+    }
+
+    @Override
+    public String isActivationCodeValid(int code){
+        if(accountActivationsRepository.existsById(code)
+            && !accountActivationsRepository.findById(code).get().isUserIsActivated()
+            && accountActivationsRepository.findById(code).get().isCodeIsValid()){
+            return "True";
+        }
+        else return "False";
     }
 
     @Override

@@ -46,16 +46,16 @@ export const createUser = (user) => {
         },
         body: JSON.stringify({
             email: user.email,
-            password: user.pwd,
+            password: user.password,
             level: user.level,
-            full_name: user.fullname
+            full_name: user.full_name
         })
 
     });
 };
 
-export const doesUserExist = (user) => {
-    return fetch('http://localhost:8080/user/exists/'+user.email,  {
+export const doesUserExist = (email) => {
+    return fetch('http://localhost:8080/user/exists?email='+email,  {
         method: 'GET',
         headers: {
             'Content-Type': 'text/plain'
@@ -63,6 +63,24 @@ export const doesUserExist = (user) => {
     });
 };
 
+export const isCodeValid = (code) => {
+    return fetch('http://localhost:8080/activation/validation?code='+code,  {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'text/plain'
+        }
+    });
+};
+
+
+export const registerUser = (code) => {
+    return fetch('http://localhost:8080/activation?code='+code, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+};
 
 export const getCurrentUser = () => {
     return request({

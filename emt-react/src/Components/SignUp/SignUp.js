@@ -21,10 +21,10 @@ class SignUp extends Component{
         this.state = {
             email: "",
             errorMessage: "",
-            fullname: "",
-            pwd: "",
+            full_name: "",
+            password: "",
             repwd: "",
-            level: null,
+            level: 0,
             showErrorMsg: false
         }
 
@@ -38,7 +38,7 @@ class SignUp extends Component{
     }
 
     changeFullName = (n) => {
-        this.setState({ fullname: n.target.value });
+        this.setState({ full_name: n.target.value });
     }
 
     changeEmail(c) {
@@ -46,7 +46,7 @@ class SignUp extends Component{
     }
 
     changePassword(c) {
-        this.setState({ pwd: c.target.value });
+        this.setState({ password: c.target.value });
     }
 
     changeRePassword(c) {
@@ -64,8 +64,8 @@ class SignUp extends Component{
         let user = {
             email: this.state.email,
             level: this.state.level.value,
-            full_name: this.state.fullname,
-            password: this.state.pwd
+            full_name: this.state.full_name,
+            password: this.state.password
         }
         console.log(user)
 
@@ -75,17 +75,18 @@ class SignUp extends Component{
                 this.setState({
                     errorMessage: data
                 }, () => {
+                    console.log(user.email)
                     console.log(this.state.errorMessage)
 
                     if(user.email === "" || user.level === "" ||
-                        user.fullname === "" || user.pwd === "" || this.state.repwd === ""){
+                        user.full_name === "" || user.password === "" || this.state.repwd === ""){
 
                         this.setState({
                             errorMessage: "Missing information. Please fill out all of the fields.",
                             showErrorMsg: true
                         });
                     }
-                    else if(this.state.pwd !== this.state.repwd){
+                    else if(this.state.password !== this.state.repwd){
                         this.setState({
                             errorMessage: "Passwords don't match.",
                             showErrorMsg: true
@@ -98,7 +99,9 @@ class SignUp extends Component{
                         });
                     }
                     else{
+                        console.log(user);
                         createUser(user);
+                        this.props.history.push('/activation');
                         this.setState({
                             showErrorMsg: false,
                             showSuccessMsg: true
@@ -111,7 +114,7 @@ class SignUp extends Component{
     }
 
     render() {
-        
+
         const { level } = this.state;
 
         return (

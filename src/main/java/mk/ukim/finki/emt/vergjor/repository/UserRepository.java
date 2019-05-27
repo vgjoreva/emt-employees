@@ -17,8 +17,8 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query("select u from User u where u.departmentID.department_id = :department_id")
     List<User> findByDepartmentID(@Param("department_id") int department_id);
 
-    @Query("select count(u) from User u where u.email = :email")
-    int existsByEmail(@Param("email") String email);
+    @Query("select case when count(u) > 0 then true else false end from User u where u.email = :email")
+    boolean existsByEmail(@Param("email") String email);
 
     @Query("select u from User u where u.email = :email")
     User findByEmail(@Param("email") String email);

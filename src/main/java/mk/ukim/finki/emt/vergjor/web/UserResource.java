@@ -18,7 +18,7 @@ import javax.websocket.Session;
 import java.util.Map;
 
 @CrossOrigin(origins = "*")
-@Controller
+@RestController
 @RequestMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserResource {
 
@@ -47,29 +47,34 @@ public class UserResource {
     }
 
     @PostMapping("/activation")
-    public boolean activateUser(@RequestParam("code") int code){
-        return userService.activateUserAccount(code);
+    public void activateUser(@RequestParam("code") int code){
+        userService.activateUserAccount(code);
     }
 
-    @GetMapping("/activation/{code}")
+    /*@GetMapping("/activation/{code}")
     public boolean activateUserByEmail(@PathVariable("code") int code){
         return userService.activateUserAccount(code);
     }
+*/
+    @GetMapping("/activation/validation")
+    public String isActivationCodeValid(@RequestParam("code") int code){
+        return userService.isActivationCodeValid(code);
+    }
 
-    @GetMapping("/user/exists/{email}")
-    public String existsUserByEmail(@PathVariable("email") String email){
+    @GetMapping("/user/exists")
+    public String existsUserByEmail(@RequestParam("email") String email){
         return userService.existsByEmail(email);
     }
 
     @PostMapping("/forgot_password")
-    public int forgotPassword(@RequestParam("email") String email){
+    public boolean forgotPassword(@RequestParam("email") String email){
 
         String doesUserExist = userService.existsByEmail(email);
-        if (doesUserExist != "Valid") {
+        if (!doesUserExist.equals("Valid")) {
             userService.sendNewPassword(email);
-            return 1;
+            return true;
         }
-        else return 0;
+        else return false;
     }
 
     /*@GetMapping("/new_password/{id}")
