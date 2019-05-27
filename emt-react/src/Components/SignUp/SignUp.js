@@ -31,8 +31,8 @@ class SignUp extends Component{
     }
 
     componentDidMount() {
-        if (localStorage.getItem(ACCESS_TOKEN) != null) {
-            console.log('token', localStorage.getItem(ACCESS_TOKEN));
+        if (localStorage.getItem(ACCESS_TOKEN) != null ||
+            sessionStorage.getItem(ACCESS_TOKEN) != null) {
             this.props.history.push('/home');
         }
     }

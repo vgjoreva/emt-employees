@@ -15,8 +15,8 @@ class ActivateUser extends Component{
     }
 
     componentDidMount() {
-        if (localStorage.getItem(ACCESS_TOKEN) != null) {
-            console.log('token', localStorage.getItem(ACCESS_TOKEN));
+        if (localStorage.getItem(ACCESS_TOKEN) != null ||
+            sessionStorage.getItem(ACCESS_TOKEN) != null) {
             this.props.history.push('/home');
         }
         else if(this.props.match.params.code != null){

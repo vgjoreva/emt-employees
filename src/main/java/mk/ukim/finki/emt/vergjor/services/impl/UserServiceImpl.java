@@ -1,6 +1,5 @@
 package mk.ukim.finki.emt.vergjor.services.impl;
 
-import mk.ukim.finki.emt.vergjor.config.SecurityConfiguration;
 import mk.ukim.finki.emt.vergjor.models.*;
 import mk.ukim.finki.emt.vergjor.repository.AccountActivationsRepository;
 import mk.ukim.finki.emt.vergjor.repository.DepartmentRepository;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -290,10 +288,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserPassword(String id, String password){
-
         User user = userRepository.getOne(id);
-        user.setPassword(password);
+        user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
-
     }
+
 }

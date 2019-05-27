@@ -66,31 +66,9 @@ public class UserResource {
         return userService.existsByEmail(email);
     }
 
-    @PostMapping("/forgot_password")
-    public boolean forgotPassword(@RequestParam("email") String email){
-
-        String doesUserExist = userService.existsByEmail(email);
-        if (!doesUserExist.equals("Valid")) {
-            userService.sendNewPassword(email);
-            return true;
-        }
-        else return false;
+    @PostMapping("/login/forgot_password")
+    public void forgotPassword(@RequestParam("email") String email){
+        userService.sendNewPassword(email);
     }
-
-    /*@GetMapping("/new_password/{id}")
-    public String newPasswordView(HttpServletResponse response, Model model, @PathVariable("id") String id){
-        model.addAttribute("user", id);
-        Cookie cookie = new Cookie("id", id);
-        response.addCookie(cookie);
-        return "newPassword.html";
-    }
-
-    @PostMapping("/new_password")
-    public String newPassword(HttpServletRequest request, @RequestParam("password") String password){
-        Cookie c[] = request.getCookies();
-        userService.updateUserPassword(c[0].getValue(), password);
-        return "redirect:/login";
-    }*/
-
 
 }

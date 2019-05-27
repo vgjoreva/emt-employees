@@ -17,7 +17,7 @@ class App extends Component{
             <div>
                 <Route exact path="/" render={() => (<Redirect to="/login" />)} />
                 <Route exact path='/login' component={SignIn} />
-                <Route exact path='/login/forget_password' component={ForgetPassword} />
+                <Route exact path='/login/forgot_password' component={ForgetPassword} />
                 <Route exact path='/sign_up' component={SignUp} />
                 <Route exact path='/activation' component={ActivateUser} />
                 <Route exact path="/activation/:code" component={ActivateUser} />

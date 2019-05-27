@@ -82,6 +82,16 @@ export const registerUser = (code) => {
     });
 };
 
+export const forgotPassword = (email) => {
+    return fetch('http://localhost:8080/login/forgot_password?email='+email, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+};
+
+
 export const getCurrentUser = () => {
     return request({
         url: "http://localhost:8080/current_user",
