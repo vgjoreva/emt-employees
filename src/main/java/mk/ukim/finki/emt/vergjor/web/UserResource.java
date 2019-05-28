@@ -93,4 +93,9 @@ public class UserResource {
         userService.changePassword(body.get("id"), body.get("password"));
     }
 
+    @GetMapping("/account/validation")
+    public String isAccountValid(@RequestParam("id") String id){
+        return userService.isAccountValid(id);
+    }
+
 }

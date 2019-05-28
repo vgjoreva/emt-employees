@@ -12,6 +12,7 @@ public interface UserService {
     String existsByEmail(String email);
     void activateUserAccount(int code);
     String isActivationCodeValid(int code);
+    String isAccountValid(String id);
     boolean isUserRegistered(String user_id);
     void sendNewPassword(String email);
     void updateUserPassword(String id, String password);

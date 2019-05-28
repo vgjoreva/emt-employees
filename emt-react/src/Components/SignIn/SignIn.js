@@ -20,6 +20,16 @@ class SignIn extends Component{
             sessionStorage.getItem(ACCESS_TOKEN) != null){
             this.props.history.push('/home');
         }
+        else if(sessionStorage.getItem("errorMessage") != null &&
+            sessionStorage.getItem("showErrorMsg") != null){
+            this.setState({
+                errorMessage: sessionStorage.getItem("errorMessage"),
+                showErrorMsg: sessionStorage.getItem("showErrorMsg")
+            })
+
+            sessionStorage.removeItem("errorMessage")
+            sessionStorage.removeItem("showErrorMsg")
+        }
     }
 
     changeUsername(c) {

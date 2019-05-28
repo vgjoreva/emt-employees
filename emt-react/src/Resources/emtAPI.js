@@ -146,3 +146,12 @@ export const updateUserPassword = (user) => {
         })
     });
 };
+
+export const isAccountValid = (id) => {
+    return fetch('http://localhost:8080//account/validation?id='+id,  {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'text/plain'
+        }
+    });
+};

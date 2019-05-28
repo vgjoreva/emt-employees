@@ -96,10 +96,14 @@ class ForgetPassword extends Component{
         }
     }
 
+    goBack(){
+        this.props.history.push("/login")
+    }
+
     render() {
         return (
             <div className="container mx-auto text-center">
-                <h4 className="mt-5 mb-5">Forgot password</h4>
+                <h4 className="m-5">Forgot password</h4>
                 <form className="form col-5 mx-auto">
 
                     {
@@ -109,6 +113,9 @@ class ForgetPassword extends Component{
                         </div>
                     }
 
+                    <button type="button" className="btn btn-outline-info" onClick={this.goBack.bind(this)}>
+                        Back
+                    </button>
 
                     <div className="form-group">
                         <label htmlFor="email">Enter your e-mail address:</label>

@@ -159,7 +159,7 @@ public class UserServiceImpl implements UserService {
             accountActivation.setUserIsActivated(false);
             accountActivation.setCodeIsValid(true);
             accountActivation.setUser_id(user);
-            accountActivation.setEmployee_position(roleRepository.findByRoleID(2));
+            accountActivation.setEmployee_position(roleRepository.findByRoleID(4));
 
             accountActivationsRepository.save(accountActivation);
 
@@ -315,6 +315,15 @@ public class UserServiceImpl implements UserService {
         User user = findUserById(id);
         user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
+    }
+
+    @Override
+    public String isAccountValid(String id){
+        if(accountActivationsRepository.isUserValid(id)){
+            System.out.println(accountActivationsRepository.isUserValid(id));
+            return "True";
+        }
+        else return "False";
     }
 
 }

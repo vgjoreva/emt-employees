@@ -1,6 +1,6 @@
 import {Component} from "react";
 import React from "react";
-import {ACCESS_TOKEN, getCurrentUser} from "../../Resources/emtAPI";
+import {ACCESS_TOKEN, getCurrentUser, isAccountValid, isCodeValid, registerUser} from "../../Resources/emtAPI";
 import Employee from "./User/Employee/Employee";
 import Manager from "../Home/User/Manager";
 
@@ -42,11 +42,34 @@ class Home extends Component{
                     sessionStorage.setItem("role", data.role)
                     console.log(data.role)
                     if(data.role === "USER"){
-                        if(sessionStorage.getItem(ACCESS_TOKEN) != null)
-                            sessionStorage.removeItem(ACCESS_TOKEN)
-                        if(localStorage.getItem(ACCESS_TOKEN) != null)
-                            localStorage.removeItem(ACCESS_TOKEN)
-                        this.props.history.push('/activation');
+                        isAccountValid(data.id)
+                            .then(response => response.text())
+                            .then((data) => {
+                                console.log('data: ', data)
+                                this.setState({
+                                    errorMessage: data
+                                }, () => {
+
+                                    if(data === "True"){
+                                        if(sessionStorage.getItem(ACCESS_TOKEN) != null)
+                                            sessionStorage.removeItem(ACCESS_TOKEN)
+                                        if(localStorage.getItem(ACCESS_TOKEN) != null)
+                                            localStorage.removeItem(ACCESS_TOKEN)
+                                        this.props.history.push('/activation');
+                                    }
+                                    else{
+                                        if(sessionStorage.getItem(ACCESS_TOKEN) != null)
+                                            sessionStorage.removeItem(ACCESS_TOKEN)
+                                        if(localStorage.getItem(ACCESS_TOKEN) != null)
+                                            localStorage.removeItem(ACCESS_TOKEN)
+
+                                        sessionStorage.setItem("errorMessage", "Invalid username or password")
+                                        sessionStorage.setItem("showErrorMsg", "true")
+                                        this.props.history.push('/login');
+                                    }
+
+                                })
+                            })
                     }
                     else if(data.role === "EMPLOYEE"){
                         this.setState({

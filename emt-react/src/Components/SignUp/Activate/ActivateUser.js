@@ -81,6 +81,10 @@ class ActivateUser extends Component{
 
     }
 
+    goBack(){
+        this.props.history.push("/login")
+    }
+
     render() {
         return (
             <div className="container mx-auto text-center">
@@ -93,6 +97,10 @@ class ActivateUser extends Component{
                             {this.state.errorMessage}
                         </div>
                     }
+
+                    <button type="button" className="btn btn-outline-info" onClick={this.goBack.bind(this)}>
+                        Back
+                    </button>
 
                     <div className="form-group">
                         <label htmlFor="code">Enter activation code:</label>
