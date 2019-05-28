@@ -42,34 +42,11 @@ class Home extends Component{
                     sessionStorage.setItem("role", data.role)
                     console.log(data.role)
                     if(data.role === "USER"){
-                        isAccountValid(data.id)
-                            .then(response => response.text())
-                            .then((data) => {
-                                console.log('data: ', data)
-                                this.setState({
-                                    errorMessage: data
-                                }, () => {
-
-                                    if(data === "True"){
-                                        if(sessionStorage.getItem(ACCESS_TOKEN) != null)
-                                            sessionStorage.removeItem(ACCESS_TOKEN)
-                                        if(localStorage.getItem(ACCESS_TOKEN) != null)
-                                            localStorage.removeItem(ACCESS_TOKEN)
-                                        this.props.history.push('/activation');
-                                    }
-                                    else{
-                                        if(sessionStorage.getItem(ACCESS_TOKEN) != null)
-                                            sessionStorage.removeItem(ACCESS_TOKEN)
-                                        if(localStorage.getItem(ACCESS_TOKEN) != null)
-                                            localStorage.removeItem(ACCESS_TOKEN)
-
-                                        sessionStorage.setItem("errorMessage", "Invalid username or password")
-                                        sessionStorage.setItem("showErrorMsg", "true")
-                                        this.props.history.push('/login');
-                                    }
-
-                                })
-                            })
+                        if(sessionStorage.getItem(ACCESS_TOKEN) != null)
+                            sessionStorage.removeItem(ACCESS_TOKEN)
+                        if(localStorage.getItem(ACCESS_TOKEN) != null)
+                            localStorage.removeItem(ACCESS_TOKEN)
+                        this.props.history.push('/activation');
                     }
                     else if(data.role === "EMPLOYEE"){
                         this.setState({
