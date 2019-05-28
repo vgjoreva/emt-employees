@@ -13,6 +13,7 @@ class NewPassword extends Component{
             errorMessage: "",
             showErrorMsg: false
         }
+        props.signOut.bind(this)
     }
 
     changePassword(c) {
@@ -47,15 +48,20 @@ class NewPassword extends Component{
 
             updateUserPassword(user).then(response => response.text())
                 .then(() => {
-                    sessionStorage.setItem("removeToken", "true")
                     this.setState({
                         errorMessage: "",
                         showErrorMsg: false
                     })
+                    sessionStorage.setItem("removeToken", "true")
+                    window.location.reload()
                 })
 
         }
 
+    }
+
+    signOut(){
+        this.props.signOut.bind(this)
     }
 
     render() {

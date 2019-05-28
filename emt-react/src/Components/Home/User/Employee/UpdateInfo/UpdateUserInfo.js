@@ -36,7 +36,7 @@ class UpdateUserInfo extends Component{
         this.setState({level});
     }
 
-    editUser = (s) =>{
+    editUser = (s) => {
 
         s.preventDefault()
 
@@ -57,15 +57,15 @@ class UpdateUserInfo extends Component{
                     department_name: data.department_name,
                     level: data.level
                 })
+                window.location.reload()
             })
-
     }
 
     render() {
 
         return (
 
-            <form className="form" noValidate autoComplete="off">
+            <form className="form m-2" noValidate autoComplete="off">
 
                 <div className="form-group">
                     <TextField

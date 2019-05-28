@@ -73,7 +73,8 @@ class Employee extends Component{
                         </ul>
                     </nav>
 
-                    <NewPassword user = {this.props.user} />
+                    <NewPassword user = {this.props.user}
+                                 signOut = {this.props.signOut.bind(this)}/>
 
                 </div>
             }

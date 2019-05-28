@@ -13,6 +13,7 @@ class Home extends Component{
             showEmployeeData: false,
             showManagerData: false
         }
+        this.signOut.bind(this)
 
     }
 
@@ -25,9 +26,9 @@ class Home extends Component{
                 sessionStorage.removeItem(ACCESS_TOKEN)
             }
             sessionStorage.removeItem("removeToken")
+            this.props.history.push('/login');
         }
-
-        if (localStorage.getItem(ACCESS_TOKEN) == null &&
+        else if (localStorage.getItem(ACCESS_TOKEN) == null &&
             sessionStorage.getItem(ACCESS_TOKEN) == null) {
             this.props.history.push('/login');
         }
@@ -63,15 +64,34 @@ class Home extends Component{
         }
     }
 
+    signOut = (s) =>{
+
+        s.preventDefault()
+
+        if(sessionStorage.getItem(ACCESS_TOKEN) != null)
+            sessionStorage.removeItem(ACCESS_TOKEN)
+
+        if(localStorage.getItem(ACCESS_TOKEN) != null)
+            localStorage.removeItem(ACCESS_TOKEN)
+
+        this.props.history.push("/login")
+
+    }
+
 
     render() {
         return (
             <div className="container mx-auto text-center">
                 <h4 className="mt-5 mb-5">Welcome {this.state.user.name}!</h4>
 
+                <button type="button" className="btn btn-outline-info" onClick={this.signOut.bind(this)}>
+                    Sign Out
+                </button>
+
                 {
                     this.state.showEmployeeData &&
-                        <Employee user={this.state.user}/>
+                        <Employee user={this.state.user}
+                                  signOut={this.signOut.bind(this)}/>
                 }
 
                 {
