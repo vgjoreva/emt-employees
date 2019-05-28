@@ -1,6 +1,6 @@
 import {Component} from "react";
 import React from "react";
-import {ACCESS_TOKEN, isCodeValid, registerUser} from "../../../Resources/emtAPI";
+import {ACCESS_TOKEN, isCodeValid, registerUser, getCurrentUser} from "../../../Resources/emtAPI";
 
 class ActivateUser extends Component{
 
@@ -15,12 +15,27 @@ class ActivateUser extends Component{
     }
 
     componentDidMount() {
+
+        if(sessionStorage.getItem("isActivated") != null){
+            sessionStorage.removeItem("isActivated")
+            this.props.history.push('/login');
+        }
         if (localStorage.getItem(ACCESS_TOKEN) != null ||
             sessionStorage.getItem(ACCESS_TOKEN) != null) {
             this.props.history.push('/home');
         }
         else if(this.props.match.params.code != null){
             this.registerUserHandler()
+        }
+
+        if(sessionStorage.getItem("errorMessage") != null && sessionStorage.getItem("showErrorMsg") != null){
+            this.setState({
+                errorMessage: sessionStorage.getItem("errorMessage"),
+                showErrorMsg: sessionStorage.getItem("showErrorMsg")
+            })
+
+            sessionStorage.removeItem("errorMessage")
+            sessionStorage.removeItem("showErrorMsg")
         }
 
     }
@@ -46,17 +61,19 @@ class ActivateUser extends Component{
 
                     if(data === "True"){
                         registerUser(code)
-                        this.props.history.push('/login');
                         this.setState({
                             errorMessage: "",
-                            showErrorMsg: false
+                            showErrorMsg: false,
                         })
+                        sessionStorage.setItem("isActivated", "true")
                     }
                     else{
                         this.setState({
                             errorMessage: "Invalid code",
                             showErrorMsg: true
                         })
+                        sessionStorage.setItem("errorMessage", "Invalid code")
+                        sessionStorage.setItem("showErrorMsg", "true")
                     }
 
                 })

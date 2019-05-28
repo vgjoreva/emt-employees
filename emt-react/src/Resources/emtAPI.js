@@ -1,3 +1,4 @@
+import * as Promise from "q";
 
 export const ACCESS_TOKEN = 'accessToken';
 
@@ -10,9 +11,14 @@ const request = (options) => {
         headers.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN))
     }
 
+    if(sessionStorage.getItem(ACCESS_TOKEN)) {
+        headers.append('Authorization', 'Bearer ' + sessionStorage.getItem(ACCESS_TOKEN))
+    }
+
+    console.log(ACCESS_TOKEN)
     const defaults = {headers: headers};
     options = Object.assign({}, defaults, options);
-
+    console.log(headers)
     return fetch(options.url, options)
         .then(response =>
             response.json().then(json => {
@@ -109,15 +115,34 @@ export const updateUserInfo = (user) => {
         headers.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN))
     }
 
-    return fetch("http://localhost:8080/user", {
+    return fetch("http://localhost:8080/edit_user", {
         method: 'PATCH',
         headers: headers,
         body: JSON.stringify({
             id: user.id,
             email: user.email,
-            password: user.pwd,
-            userName: user.username,
-            fullName: user.fullname
+            level: user.level,
+            full_name: user.full_name
+        })
+    });
+};
+
+export const updateUserPassword = (user) => {
+
+    const headers = new Headers({
+        'Content-Type': 'application/json',
+    })
+
+    if(localStorage.getItem(ACCESS_TOKEN)) {
+        headers.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN))
+    }
+
+    return fetch("http://localhost:8080/new_password", {
+        method: 'PATCH',
+        headers: headers,
+        body: JSON.stringify({
+            id: user.id,
+            password: user.password
         })
     });
 };

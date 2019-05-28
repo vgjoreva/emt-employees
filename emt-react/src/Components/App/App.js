@@ -9,6 +9,7 @@ import SignIn from "../SignIn/SignIn";
 import ForgetPassword from "../SignIn/ForgetPassword/ForgetPassword";
 import SignUp from "../SignUp/SignUp";
 import ActivateUser from "../SignUp/Activate/ActivateUser";
+import Home from "../Home/Home";
 
 class App extends Component{
 
@@ -21,6 +22,7 @@ class App extends Component{
                 <Route exact path='/sign_up' component={SignUp} />
                 <Route exact path='/activation' component={ActivateUser} />
                 <Route exact path="/activation/:code" component={ActivateUser} />
+                <Route exact path='/home' component={Home} />
             </div>
         );
     }

@@ -118,6 +118,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void registerUser(User user) {
+
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.socketFactory.port", "465");
@@ -289,6 +290,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserPassword(String id, String password){
         User user = userRepository.getOne(id);
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+    }
+
+    @Override
+    public void editUserInfo(User user){
+
+        if(user.getLevel() == EmploymentLevel.JUNIOR_DEVELOPER ||
+                user.getLevel() == EmploymentLevel.MID_LEVEL_DEVELOPER ||
+                user.getLevel() == EmploymentLevel.SENIOR_DEVELOPER)
+            user.setDepartmentID(departmentRepository.findByDepartmentID(1));
+        else if(user.getLevel() == EmploymentLevel.JUNIOR_TESTER ||
+                user.getLevel() == EmploymentLevel.MID_LEVEL_TESTER||
+                user.getLevel() == EmploymentLevel.SENIOR_TESTER)
+            user.setDepartmentID(departmentRepository.findByDepartmentID(2));
+
+        userRepository.save(user);
+
+    }
+
+    @Override
+    public void changePassword(String id, String password){
+        User user = findUserById(id);
         user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
     }

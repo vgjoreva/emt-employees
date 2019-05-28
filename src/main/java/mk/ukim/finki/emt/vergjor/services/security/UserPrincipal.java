@@ -1,6 +1,8 @@
 package mk.ukim.finki.emt.vergjor.services.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import mk.ukim.finki.emt.vergjor.models.Department;
+import mk.ukim.finki.emt.vergjor.models.EmploymentLevel;
 import mk.ukim.finki.emt.vergjor.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,15 +22,35 @@ public class UserPrincipal implements UserDetails {
 
     private String email;
 
+    private String role;
+
+    private int department_id;
+
+    private String department_name;
+
+    private int level;
+
     @JsonIgnore
     private String password;
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(String id, String name, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(String id,
+                         String name,
+                         String email,
+                         String role,
+                         int department_id,
+                         String department_name,
+                         int level,
+                         String password,
+                         Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.fullName = name;
         this.email = email;
+        this.role = role;
+        this.department_name = department_name;
+        this.department_id = department_id;
+        this.level = level;
         this.password = password;
         this.authorities = authorities;
     }
@@ -37,12 +59,15 @@ public class UserPrincipal implements UserDetails {
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRoleID().getRole()));
-        System.out.println(authorities.get(0));
 
         return new UserPrincipal(
                 user.getUser_id(),
                 user.getFull_name(),
                 user.getEmail(),
+                user.getRoleID().getRole(),
+                user.getDepartmentID().getId(),
+                user.getDepartmentID().getDepartment_name(),
+                user.getLevel().ordinal(),
                 user.getPassword(),
                 authorities
         );
@@ -58,6 +83,20 @@ public class UserPrincipal implements UserDetails {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getRole(){ return role; }
+
+    public int getDepartment_id() {
+        return department_id;
+    }
+
+    public String getDepartment_name() {
+        return department_name;
+    }
+
+    public int getLevel() {
+        return level;
     }
 
     @Override

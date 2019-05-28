@@ -41,7 +41,7 @@ public class AuthResource {
     JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    PasswordEncoder passwordEndoder;
+    PasswordEncoder passwordEncoder;
 
     public AuthResource(CustomUserDetailsService customUserDetailsService, UserService userServices, UserRepository usersRepository, AccountActivationsRepository activationsRepository) {
         this.customUserDetailsService = customUserDetailsService;
@@ -52,11 +52,9 @@ public class AuthResource {
 
     @GetMapping("/current_user")
     public UserPrincipal GetCurrentUser(HttpServletRequest request) throws Exception {
-
         String token = request.getHeader("Authorization").substring(7);
         String id = jwtTokenProvider.getUserIdFromJWT(token);
         return (UserPrincipal) customUserDetailsService.loadUserById(id);
-
     }
 
     @PostMapping("/login")

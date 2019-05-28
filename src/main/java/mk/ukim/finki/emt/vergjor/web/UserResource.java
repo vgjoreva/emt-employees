@@ -51,11 +51,6 @@ public class UserResource {
         userService.activateUserAccount(code);
     }
 
-    /*@GetMapping("/activation/{code}")
-    public boolean activateUserByEmail(@PathVariable("code") int code){
-        return userService.activateUserAccount(code);
-    }
-*/
     @GetMapping("/activation/validation")
     public String isActivationCodeValid(@RequestParam("code") int code){
         return userService.isActivationCodeValid(code);
@@ -69,6 +64,33 @@ public class UserResource {
     @PostMapping("/login/forgot_password")
     public void forgotPassword(@RequestParam("email") String email){
         userService.sendNewPassword(email);
+    }
+
+    @PatchMapping("/edit_user")
+    public void editUserInfo(@RequestBody Map<String,String> body){
+
+        User user = userService.findUserById(body.get("id"));
+
+        if(!user.getFull_name().equals(body.get("full_name")))
+            user.setFull_name(body.get("full_name"));
+
+        if(!user.getEmail().equals(body.get("email")))
+            user.setEmail(body.get("email"));
+
+        if(body.get("level") != null)
+            for(EmploymentLevel e : EmploymentLevel.values()){
+                if(e.ordinal() == Integer.parseInt(body.get("level"))){
+                    user.setLevel(e);
+                    break;
+                }
+            }
+
+        userService.editUserInfo(user);
+    }
+
+    @PatchMapping("/new_password")
+    public void newPassword(@RequestBody Map<String,String> body){
+        userService.changePassword(body.get("id"), body.get("password"));
     }
 
 }

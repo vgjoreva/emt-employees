@@ -75,6 +75,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/forgot_password/**").permitAll()
                 .antMatchers("/current_user").permitAll()
                 .antMatchers("/user/exists/**").permitAll()
+                .antMatchers("/edit_user").permitAll()
+                .antMatchers("/new_password").permitAll()
                 .anyRequest().authenticated();
 
 

@@ -15,5 +15,6 @@ public interface UserService {
     boolean isUserRegistered(String user_id);
     void sendNewPassword(String email);
     void updateUserPassword(String id, String password);
-
+    void editUserInfo(User user);
+    void changePassword(String id, String password);
 }

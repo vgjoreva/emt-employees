@@ -4,8 +4,8 @@ import {ACCESS_TOKEN, login} from '../../Resources/emtAPI';
 
 class SignIn extends Component{
 
-    constructor(props, nextState){
-        super(props, nextState)
+    constructor(props){
+        super(props)
         this.state = {
             email: "",
             errorMessage: "",
